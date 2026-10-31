@@ -26,12 +26,17 @@ export class SystemApiService {
     this.lastError.set(null);
 
     return this.http.get<ApiResponse<SystemStatus>>(`${this.baseUrl}/status`).pipe(
-      map(res => res.data),
-      tap(data => {
-        this.isConnected.set(true);
+      map(response => ({
+        data: response.data,
+        connected: response.success && response.data?.status === 'ONLINE' && response.data.databaseConnected
+      })),
+      tap(({ data, connected }) => {
+        this.isConnected.set(connected);
         this.isChecking.set(false);
         this.systemInfo.set(data);
+        this.lastError.set(connected ? null : 'Backend health check reported an offline or unavailable database status.');
       }),
+      map(({ data, connected }) => connected ? data : null),
       catchError(err => {
         this.isConnected.set(false);
         this.isChecking.set(false);

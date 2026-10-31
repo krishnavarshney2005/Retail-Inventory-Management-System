@@ -72,16 +72,16 @@ interface RecentMovement {
           <div class="banner-text">
             <div class="banner-title">
               @if (systemApi.isConnected()) {
-                Spring Boot REST API Connected &amp; Auditing Enabled
+                Spring Boot Backend Connected
               } @else {
-                Spring Boot Backend Offline (Running on http://localhost:8080/api)
+                Spring Boot Backend Offline
               }
             </div>
             <div class="banner-sub">
               @if (systemApi.isConnected()) {
-                Database: MySQL 8.0 &bull; Java: {{ systemApi.systemInfo()?.javaVersion || '17' }} &bull; Layered Architecture Active
+                Status: {{ systemApi.systemInfo()?.status }} &bull; Database Connected &bull; Java: {{ systemApi.systemInfo()?.javaVersion || '17' }}
               } @else {
-                Start the backend application with <code>mvn spring-boot:run</code> inside <code>/backend</code>
+                {{ systemApi.lastError() || 'The production API health check did not succeed.' }}
               }
             </div>
           </div>
